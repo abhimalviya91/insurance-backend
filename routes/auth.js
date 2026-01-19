@@ -1,13 +1,12 @@
 const router = require("express").Router();
-const Admin = require("../models/Admin");
+const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  console.log("LOGIN TRY:", email);
 
-  const admin = await Admin.findOne({ email });
+  const admin = await User.findOne({ email, role: "admin" });
   if (!admin) {
     console.log("ADMIN NOT FOUND");
     return res.status(401).json("Invalid credentials");
@@ -19,7 +18,12 @@ router.post("/login", async (req, res) => {
     return res.status(401).json("Invalid credentials");
   }
 
-  const token = jwt.sign({ id: admin._id }, "secretkey");
+  const token = jwt.sign(
+    { id: admin._id, role: admin.role },
+    process.env.JWT_SECRET,
+    { expiresIn: "1d" }
+  );
+
   res.json({ token });
 });
 
