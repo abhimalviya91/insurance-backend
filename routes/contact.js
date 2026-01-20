@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const Contact = require("../models/Contact");
 const sendEmail = require("../utils/sendEmail");
+const auth = require("../middleware/authMiddleware");
 
 // 📩 SAVE CONTACT (PUBLIC)
 router.post("/", async (req, res) => {
@@ -32,6 +33,7 @@ router.post("/", async (req, res) => {
   }
 });
 
+
 // 📥 GET ALL CONTACTS (ADMIN DASHBOARD)
 router.get("/", async (req, res) => {
   try {
@@ -39,6 +41,17 @@ router.get("/", async (req, res) => {
     res.json(contacts);
   } catch (err) {
     res.status(500).json([]);
+  }
+});
+
+// DELETE CONTACT (ADMIN)
+router.delete("/:id", auth, async (req, res) => {
+  try {
+    await Contact.findByIdAndDelete(req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    console.log("❌ DELETE CONTACT ERROR", err);
+    res.status(500).json({ success: false });
   }
 });
 
