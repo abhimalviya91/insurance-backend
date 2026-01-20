@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 
 module.exports = function (req, res, next) {
-  // 👇 browser se header aata hai lowercase me
   const authHeader = req.headers["authorization"];
 
   if (!authHeader) {
@@ -9,7 +8,6 @@ module.exports = function (req, res, next) {
     return res.status(401).json("No token provided");
   }
 
-  // Expected: "Bearer TOKEN"
   const parts = authHeader.split(" ");
 
   if (parts.length !== 2) {
@@ -25,7 +23,7 @@ module.exports = function (req, res, next) {
   }
 
   try {
-    const decoded = jwt.verify(token, "secretkey");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.admin = decoded;
     next();
   } catch (err) {
