@@ -6,19 +6,19 @@ const User = require("./models/User");
 
 mongoose.connect(process.env.MONGO_URI);
 
-async function createAdmin() {
-  const hashed = await bcrypt.hash("admin123", 10);
+async function run() {
+  const hash = await bcrypt.hash("admin123", 10);
 
   const admin = new User({
     name: "Admin",
-    email: "abhimalviya013@gmail.com",
-    password: hashed,
+    email: "admin@insuraone.com",
+    password: hash,
     role: "admin",
   });
 
   await admin.save();
-  console.log("✅ ADMIN CREATED CLEANLY");
+  console.log("✅ ADMIN CREATED CLEAN");
   process.exit();
 }
 
-createAdmin();
+run();
